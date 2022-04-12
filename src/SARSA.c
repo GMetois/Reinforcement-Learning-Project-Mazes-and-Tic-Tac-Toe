@@ -22,14 +22,13 @@ void training (){
         maze_reset();
         action = env_action_sample(); //choose action from s using policy derived from Q
         for (int j=0; j<ddv; j++){
-            tempoutput = maze_step(action); //take action a
-            envOuput observe = mazestep(action);
-            int reward = observe.reward;
+            tempoutput = maze_step(action); // on réalise l'action a
+            envOuput observe = mazestep(action); //on oberve le nouvel état et la récompense
             action2 = env_action_sample(); //choose action from s' using policy derived from Q
-            Q[ state_row*cols + state_col][action] = Q[ state_row*cols + state_col][action] + alpha*(reward + gamma*Q[observe.new_row*cols + observe.new_col][action2] - Q[ state_row*cols + state_col][action]); //gamma!!
+            Q[ state_row*cols + state_col][action] = Q[ state_row*cols + state_col][action] + alpha*(observe.reward + gamma*Q[observe.new_row*cols + observe.new_col][action2] - Q[ state_row*cols + state_col][action]); //gamma!!
             state_row = observe.new_row;
-            state_col = observe.new_col;
-            action = action2;
+            state_col = observe.new_col; //on change d'état ( on se déplace)
+            action = action2; //on fait l'action2
         }
     }
 }
