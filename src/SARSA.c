@@ -10,35 +10,55 @@ void MakeQ(){
             Q[i][j] = 0; //initialisation du tableau à 0
         }
     }
-    for(int i=0; i<rows*cols; i++){
-
-    }
 }
 
 
 //training
 void training (){
     for (int i=0; i<iter; i++){
-        maze_reset();
-        action = env_action_sample(); //choose action from s using policy derived from Q
-        for (int j=0; j<ddv; j++){
-            tempoutput = maze_step(action); // on réalise l'action a
-            envOuput observe = mazestep(action); //on oberve le nouvel état et la récompense
-            action2 = env_action_sample(); //choose action from s' using policy derived from Q
-            Q[ state_row*cols + state_col][action] = Q[ state_row*cols + state_col][action] + alpha*(observe.reward + gamma*Q[observe.new_row*cols + observe.new_col][action2] - Q[ state_row*cols + state_col][action]); //gamma!!
-            state_row = observe.new_row;
-            state_col = observe.new_col; //on change d'état ( on se déplace)
-            action = action2; //on fait l'action2
+        maze_reset(); //on se replace à la position de départ
+        a = env_action_sample(); //choose action from s using policy derived from Q
+        
+        //On parcourt le labyrinthe
+        while (!((state_row == goal_row)&&(state_col == goal_col))){
+            temp_output = maze_step(a); //on oberve le nouvel état et la récompense
+            int rew = temp_output.reward;
+            int temp_col = temp_output.new_col;
+            int temp_row = temp_output.new_row;
+            a2 = env_action_sample(); //choose action from s' using policy derived from Q
+            
+            //On remplit la matrice Q à la position initiale et les actions choisies
+            Q[state_row*cols + state_col][a]+= alpha*(rew + gamma*(Q[temp_row*cols + temp_col][a2]) - Q[state_row*cols + state_col][a]);
+           
+            //On se déplace
+            state_row = temp_row;
+            state_col = temp_col;
+            //on choisit l'action telle que précedemment
+            action = action2; 
         }
     }
 }
 
 
 
+void add_crumbs(){
+     for (int i=0; i<rows; i++){
+          for (int j=0; j<cols; j++){
+              if (visited[i][j] ==crumb){
+                  maze[i][j] ='.';
+              }
+          }
+     }
+     maze[start_row][start_col]= 's';
+}
+
+
 int main(){
     alpha = 0.2;
     epsilon = 0.2;
-    gamma = 0.2;
+    float gamma = 0.2;
+    int iter = 1000;
+    
     maze_make("maze.txt");
     init_visited();
     MakeQ();
