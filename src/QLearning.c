@@ -5,20 +5,22 @@ void MakeQ(){
 
     for(int i=0; i<rows*cols; i++){
         Q[i] = malloc(4*sizeof(int));
+        for(int j=0; j<4; j++){
+            Q[i][j] = 0;
+        }
     }
     for(int i=0; i<rows*cols; i++){
-        for(int j=0; j<4; j++){
-        Q[i][j] = 0;
-        }
+
     }
 }
 
 void training (){
     for (int i=0; i<iter; i++){
-        state_col = start_col;
-        state_row = state_row;
+        maze_reset();
         for (int j=0; j<ddv; j++){
-            
+            action = env_action_sample();
+            tempoutput = maze_step(action);
+
         }
     }
 }
