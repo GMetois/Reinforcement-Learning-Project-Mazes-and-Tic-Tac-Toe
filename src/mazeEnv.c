@@ -18,6 +18,9 @@ void maze_make(char* file_name){
      int swap = 0;
 
      FILE* file = fopen(file_name, "r");
+     if (file == NULL){
+        printf("Pointeur nul");
+     }
 
      if (file) {
          /* lire la premiere ligne avant EOF */

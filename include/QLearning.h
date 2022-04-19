@@ -1,14 +1,19 @@
-#ifndef MAZEENV_H
-#define MAZEENV_H
+#ifndef QLEARNING_H
+#define QLEARNING_H
 
 #include <stdio.h>
 #include <stdlib.h>
 
 char** Q;
-float alpha = 0.2;
-float epsilon = 0.2;
-int iter = 1000;
-int ddv = 1000;
+float alp;
+float eps;
+float gam;
+int iter;
 
+void MakeQ();
+
+void training();
+
+void add_crumbs();
 
 #endif

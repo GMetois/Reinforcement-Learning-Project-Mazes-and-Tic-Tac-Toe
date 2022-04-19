@@ -2,15 +2,15 @@ CC=gcc
 CFLAGS=-W -Wall
 INC=-I include/
 SRC=src/
-EXEC=dfs
+EXEC=QLearning
 
 all: $(EXEC) clean
 
-dfs: $(SRC)dfs.o $(SRC)functions.o $(SRC)mazeEnv.o
-	$(CC) $(INC) -o $(SRC)$@ $^ $(CFLAGS)
+QLearning: $(SRC)QLearning.o $(SRC)functions.o $(SRC)mazeEnv.o
+	$(CC) $(INC) -g -o $(SRC)$@ $^ $(CFLAGS)
 
 $(SRC)%.o : $(SRC)%.c
-	$(CC) $(INC) -o $@ -c $< $(CFLAGS)
+	$(CC) $(INC) -g -o $@ -c $< $(CFLAGS)
 
 clean: 
 	rm -rf $(SRC)*.o
