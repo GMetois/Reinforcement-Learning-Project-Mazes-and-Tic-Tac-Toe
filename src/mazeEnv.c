@@ -94,6 +94,7 @@ void maze_reset(){
      state_col = start_col;
 }
 
+//faire une action &observer récompense et où on se trouve
 envOutput maze_step(action a){
     int reward = 0;
     int done = 0;
