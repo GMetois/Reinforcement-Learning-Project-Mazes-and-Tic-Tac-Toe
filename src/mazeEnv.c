@@ -77,6 +77,17 @@ void maze_render(){
      printf("\n");
 }
 
+void maze_render_pos(){
+     maze[state_row][state_col] = 'o';
+     for (int i=0; i<rows; i++) {
+         for (int j=0; j< cols; j++){
+             printf("%c ", maze[i][j]);
+         }
+         printf("\n");
+     }
+     printf("\n");
+}
+
 
 void maze_reset(){
      state_row = start_row;
@@ -141,5 +152,16 @@ void init_visited()
                         }
                 }
         }
+}
+
+void add_crumbs(){
+     for (int i=0; i<rows; i++){
+          for (int j=0; j<cols; j++){
+              if (visited[i][j] ==crumb){
+                  maze[i][j] ='.';
+              }
+          }
+     }
+     maze[start_row][start_col]= 's';
 }
 

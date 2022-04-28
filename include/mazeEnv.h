@@ -47,7 +47,9 @@ void alloc_maze();
 
 void maze_make(char* );
 
-void maze_render(); 
+void maze_render();
+
+void maze_render_pos();
 
 void maze_reset();
 
@@ -58,5 +60,7 @@ action env_action_sample();
 void alloc_visited();
 
 void init_visited();
+
+void add_crumbs();
 
 #endif /* MAZEENV_H */
