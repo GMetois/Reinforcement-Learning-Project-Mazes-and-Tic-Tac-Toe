@@ -2,6 +2,7 @@
 #include "QLearning.h"
 #include "functions.h"
 #include <stdlib.h>
+#include <time.h>
 
 
 //Initialise Q.
@@ -86,10 +87,13 @@ void training (){
     //Remise à zéro du labyrinthe
     maze_reset();
     
+    //On compte les pas effectués pour sortir du labyrinthe.
+    int step = 0;
+
     //Errance jusqu'à l'arrivée.
-    int* current = &visited[state_row][state_col];
-    while((state_row != goal_row)&&(state_col != goal_col)){
-        
+    int sortie = 0;
+    while(sortie == 0){
+
         //Mémorisation de la position de départ.
         int old_row = state_row;
         int old_col = state_col;
@@ -107,16 +111,33 @@ void training (){
         
         //Application de la formule.
         float prevision = find_rew_max(state_row, state_col); 
-        Q[old_row*cols + old_row][a] += alp*(reward + gam*prevision - Q[old_row*cols + old_row][a]); 
+        Q[old_row*cols + old_row][a] += alp*(reward + gam*prevision - Q[old_row*cols + old_row][a]);
 
         //Si on rentre dans un mur annulation du déplacement.
         if (w ==1){
             state_col = old_col;
             state_row = old_row;
         }
+        
         int* current = &visited[state_row][state_col];
+
+        /*
+        //Si on découvre une nouvelle case on affiche le labyrinthe avec les crumbs
+        if (*current != crumb){
+            printf("%d\n", sortie);
+            add_crumbs();
+            maze_render();
+        }
+        */
+
         *current = crumb;
+
+        if ((state_row == goal_row)&&(state_col == goal_col)){
+            sortie = 1;
+        }
+        step+=1;
     }
+    printf("sortie trouvée en %d pas\n",step);
 }
 
 int main()
@@ -131,11 +152,12 @@ int main()
     for(int i = 0; i<iter; i++){
         printf("itération %d\n",i);
         training();
+        printf("fin de l'itération %d\n",i);
     }
     
-    Qrender();
-    add_crumbs();
-    maze_render();
+    //Qrender();
+    //add_crumbs();
+    //maze_render();
     
     return 0;
 }
