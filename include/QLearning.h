@@ -5,10 +5,10 @@
 #include <stdlib.h>
 
 float** Q;
-float alp = 0.5;
-float eps = 0.5;
-float gam = 0.5;
-int iter = 20000;
+float alp = 0.8;
+float eps = 0.1;
+float gam = 0.8;
+int iter = 50000;
 
 void MakeQ();
 

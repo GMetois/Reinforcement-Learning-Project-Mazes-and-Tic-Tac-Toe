@@ -111,7 +111,7 @@ envOutput maze_step(action a){
     }
     
     if((state_row == goal_row) && (state_col == goal_col)){
-       reward = 1;
+       reward = 10000;
        done   = 1;
     }
 

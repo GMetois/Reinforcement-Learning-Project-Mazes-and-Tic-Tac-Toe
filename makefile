@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-W -Wall
+CFLAGS=-W -Wall -lm
 INC=-I include/
 SRC=src/
 EXEC=QLearning

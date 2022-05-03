@@ -3,6 +3,7 @@
 #include "functions.h"
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 
 //Initialise Q.
@@ -16,6 +17,13 @@ void MakeQ(){
             Q[i][j] = 0;
         }
     }
+}
+
+void freeQ(){
+    for(int i=0; i<rows*cols; i++){
+        free(Q[i]);
+    }
+    free(Q);
 }
 
 //Lit dans Q.
@@ -36,11 +44,10 @@ void Qrender(){
 
 //Choix d'une action avec la politique epsilon-greedy.
 action eps_greedy(){
-    float a = (rand())/(RAND_MAX);
     action act = env_action_sample();
     
     //Choix aléatoire
-    if (a > eps){
+    if (rand()%101>eps*100){
         action act = env_action_sample();
         float rew = Qread(state_row, state_col, act);
         for (int k; k<4; k++){
@@ -54,7 +61,9 @@ action eps_greedy(){
 }
 
 //Fonction qui trouve la récompense maximale possible depuis la case donnée en argument.
+
 int find_rew_max(int row, int col){
+    /*
     float rew = Qread(row, col, 0);
     for (int k = 0; k<4; k++){
         float a = Qread(row, col, k);
@@ -63,7 +72,12 @@ int find_rew_max(int row, int col){
         }
     }
     return (rew);
+    */
+    int var = row*cols+col;
+    return (fmaxf(fmaxf(Q[var][0],Q[var][1]),fmaxf(Q[var][2],Q[var][3])));
 }
+
+
 
 //Fonction qui renvoie 1 si la case actuelle est un mur, 0 sinon.
 int iswall(){
@@ -106,12 +120,12 @@ void training (){
         float reward = state.reward;
         int w = iswall();
         if (w == 1){
-            reward = -50;
+            reward = -0.05;
         }
         
         //Application de la formule.
-        float prevision = find_rew_max(state_row, state_col); 
-        Q[old_row*cols + old_row][a] += alp*(reward + gam*prevision - Q[old_row*cols + old_row][a]);
+        float prevision = find_rew_max(state_row, state_col);
+        Q[old_row*cols + old_col][a] = Q[old_row*cols + old_col][a] + alp*(reward + gam*prevision - Q[old_row*cols + old_col][a]);
 
         //Si on rentre dans un mur annulation du déplacement.
         if (w ==1){
@@ -153,11 +167,17 @@ int main()
         printf("itération %d\n",i);
         training();
         printf("fin de l'itération %d\n",i);
+        printf("Q : %f %f %f %f\n",Q[(goal_row)*cols+goal_col][0],Q[(goal_row)*cols+goal_col][1],Q[(goal_row)*cols+goal_col][2],Q[(goal_row)*cols+goal_col][3]);
     }
+
+    //Dernier passage sans aléatoire.
+    eps=0;
+    training();
     
-    //Qrender();
-    //add_crumbs();
-    //maze_render();
+    Qrender();
+    add_crumbs();
+    maze_render();
+    freeQ();
     
     return 0;
 }
