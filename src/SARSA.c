@@ -1,123 +1,183 @@
 #include "mazeEnv.h"
 #include "QLearning.h"
 #include "functions.h"
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
 
+
+//Initialise Q.
 void MakeQ(){
-   Q = malloc(rows*cols*sizeof(char*));
+   Q = malloc(rows*cols*sizeof(float*));
    //printf("Première malloc ok");
 
     for(int i=0; i<rows*cols; i++){
-        Q[i] = malloc(4*sizeof(int));
+        Q[i] = malloc(4*sizeof(float));
         for(int j=0; j<4; j++){
-            Q[i][j] = 0;
+            Q[i][j] = 1;
         }
-        //printf("Malloc ligne %d ok", i);
     }
-    //printf("Q créée");
 }
 
-void training (){
-    for (int i=0; i<iter; i++){
-        //On se replace à la position de départ.
-        maze_reset();
-        printf("Boucle %d\n", i);
-        action a = env_action_sample();
-        printf("action choisie\n");
-        //On parcourt le labyrinthe
-        while(!((state_row == goal_row) && (state_col == goal_col))){
+void freeQ(){
+    for(int i=0; i<rows*cols; i++){
+        free(Q[i]);
+    }
+    free(Q);
+}
+
+
+//Lit dans Q.
+float Qread(int row, int col, action a){
+    return(Q[row*cols + col][a]);
+}
+
+//Affiche Q.
+void Qrender(){
+    for (int i=0; i<rows*cols; i++) {
+        for (int j=0; j< number_actions; j++){
+             printf("%f ", Q[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+
+//Choix d'une action avec la politique epsilon-greedy.
+action eps_greedy(){
+    action act = env_action_sample();
     
-            envOutput temp_output = maze_step(a);
-            printf("pas fait\n");
-            int rew = temp_output.reward;
-            int temp_col = temp_output.new_col;
-            int temp_row = temp_output.new_row;
-            printf("colonne %d, ligne %d\n", temp_col, temp_row);
-
-            action a2 = env_action_sample();
-            printf("action choisie a2\n");
-            
-            //Si on ne rentre pas dans un mur
-            int* current = &visited[temp_output.new_row][temp_output.new_col];
-            if((*current) == !(wall)) { //ON NE PASSE PAS LA CASE EN CONNUE, à proprement parler on s'en fout de savoir si la case est connue, ça évite juste de se prendre un mur.
-                printf("On est pas dans un mur\n");
-                
-                Q[state_row*cols + state_col][a]+= alp*(rew + gam*Q[temp_row*cols + temp_col][a2] - Q[state_row*cols + state_col][a]);
-                printf("formule appliquée\n");
-            
-            
-                //On se déplace
-                state_col = temp_output.new_col;
-                state_row = temp_output.new_row;
-
-                //on choisit l'action a2
-                a = a2;
-                printf("déplacement fait\n");
-            }
-
-
-        }
-        // ON FAIT UNE DERNIERE ITERATION POUR AFFICHER LE LABYRINTHE, LA ON PASSE LES CASES EN KNOWN
-
-        //On se replace à la position de départ.
-        maze_reset();
-        //On parcourt le labyrinthe
-        while(!((state_row == goal_row) && (state_col == goal_col))){
-            
-            //On fait une action et en tire une nouvelle future position
-            action a = env_action_sample();
-            envOutput temp_output = maze_step(a);
-            int rew = temp_output.reward;
-            int temp_col = temp_output.new_col;
-            int temp_row = temp_output.new_row;
-            
-            action a2 = env_action_sample();
-            //Si on ne rentre pas dans un mur
-            int* current = &visited[temp_output.new_row][temp_output.new_col];
-            if((*current) == (unknown)) {
-
-                //La on passe la case en known pour les besoins d'affichage
-                *current = known;
-                
-                Q[state_row*cols + state_col][a]+= alp*(rew + gam*Q[temp_row*cols + temp_col][a2] - Q[state_row*cols + state_col][a]);
-                
-                
-                //On se déplace
-                state_col = temp_output.new_col;
-                state_row = temp_output.new_row;
-
-                //on prend l'action a2
-                a = a2;
+    //Choix aléatoire
+    if (rand()%101>eps*100){
+        float rew = Qread(state_row, state_col, act);
+        for (int k; k<4; k++){
+            if (Qread(state_row, state_col, k) > rew){
+                rew = Qread(state_row, state_col, k);
+                act = k;
             }
         }
+    }
+    return(act);
+}
+
+
+//Fonction qui renvoie 1 si la case actuelle est un mur, 0 sinon.
+int iswall(){
+    int* current = &visited[state_row][state_col];
+    if(*current == wall){
+        return(1);
+    }
+    else{
+        return(0);
     }
 }
 
 
+//Une boucle d'entraînement du programme.
+void training (){
+    //Re-génération des points visités
+    init_visited();
 
-void add_crumbs(){
-     for (int i=0; i<rows; i++){
-          for (int j=0; j<cols; j++){
-              if (visited[i][j] ==crumb){
-                  maze[i][j] ='.';
-              }
-          }
-     }
-     maze[start_row][start_col]= 's';
+    //Re-génération d'une clé pour l'aléatoire.
+    srand(time(NULL));
+    
+    //Remise à zéro du labyrinthe
+    maze_reset();
+    
+    //On compte les pas effectués pour sortir du labyrinthe.
+    int step = 0;
+
+    //Errance jusqu'à l'arrivée.
+    int sortie = 0;
+        
+    //Choix d'une action
+        action a1 = eps_greedy();
+        
+        
+    while(sortie == 0){
+    
+        //Mémorisation de la position de départ.
+        int old_row = state_row;
+        int old_col = state_col;
+        
+        //déplacement
+        envOutput state = maze_step(a1);
+        
+        //Lecture de la récompense et ajustement si on rentre dans un mur.
+        float reward = state.reward;
+        int prev_row = state.new_row;
+        int prev_col = state.new_col;
+        int w = iswall();
+        if (w == 1){
+            reward = -50;
+        }
+        else {
+            reward = -1;
+        }
+        
+        //Choix d'une action
+        action a2 = eps_greedy();
+        
+        //Application de la formule.
+        Q[old_row*cols + old_col][a1] = Q[old_row*cols + old_col][a1] + alp*(reward + gam*Q[prev_row*cols + prev_col][a2] - Q[old_row*cols + old_col][a1]);
+
+        //Si on rentre dans un mur annulation du déplacement.
+        if (w ==1){
+            state_col = old_col;
+            state_row = old_row;
+        }
+        
+        //choix de l'action a2
+        a1 = a2;
+        
+        int* current = &visited[state_row][state_col];
+        
+
+        /*
+        //Si on découvre une nouvelle case on affiche le labyrinthe avec les crumbs
+        if (*current != crumb){
+            printf("%d\n", sortie);
+            add_crumbs();
+            maze_render();
+        }
+        */
+
+        *current = crumb;
+
+        if ((state_row == goal_row)&&(state_col == goal_col)){
+            sortie = 1;
+        }
+        step+=1;
+        //add_crumbs();
+        //maze_render();
+    }
+    printf("sortie trouvée en %d pas\n",step);
 }
 
-int main(){
-    //printf("programme lancé");
-    iter = 1000;
+int main()
+{
     maze_make("maze.txt");
-    //printf("Labyrinthe extrait");
     init_visited();
-    //printf("Matrice visitée ok");
     MakeQ();
-    printf("%d, %d \n", rows, cols);
-    printf("number of actions :  %d \n", number_actions); 
+    
+    Qrender();
     maze_render();
+    
+    for(int i = 0; i<iter; i++){
+        printf("itération %d\n",i);
+        training();
+        printf("fin de l'itération %d\n",i);
+    }
+
+    //Dernier passage sans aléatoire.
+    eps=0;
     training();
+    
+    //Qrender();
     add_crumbs();
     maze_render();
+    freeQ();
+    
     return 0;
 }
