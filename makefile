@@ -4,7 +4,7 @@ INC=-I include/
 SRC=src/
 EXEC=QLearning
 
-all: $(EXEC)
+all: $(EXEC) clean
 
 QLearning: $(SRC)QLearning.o $(SRC)functions.o $(SRC)mazeEnv.o
 	$(CC) $(INC) -g -o $(SRC)$@ $^ $(CFLAGS)

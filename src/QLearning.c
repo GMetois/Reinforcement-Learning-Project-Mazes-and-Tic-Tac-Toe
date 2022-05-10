@@ -14,7 +14,7 @@ void MakeQ(){
     for(int i=0; i<rows*cols; i++){
         Q[i] = malloc(4*sizeof(float));
         for(int j=0; j<4; j++){
-            Q[i][j] = 1;
+            Q[i][j] = 0;
         }
     }
 }
@@ -62,16 +62,6 @@ action eps_greedy(){
 //Fonction qui trouve la récompense maximale possible depuis la case donnée en argument.
 
 float find_rew_max(int row, int col){
-    /*
-    float rew = Qread(row, col, 0);
-    for (int k = 0; k<4; k++){
-        float a = Qread(row, col, k);
-        if (a > rew){
-            rew = a;
-        }
-    }
-    return (rew);
-    */
     int var = row*cols+col;
     return (fmaxf(fmaxf(Q[var][0],Q[var][1]),fmaxf(Q[var][2],Q[var][3])));
 }
@@ -160,6 +150,7 @@ void training (){
 
 int main()
 {
+    eps = eps_beginning;
     maze_make("maze.txt");
     init_visited();
     MakeQ();
@@ -168,7 +159,8 @@ int main()
     maze_render();
     
     for(int i = 0; i<iter; i++){
-        printf("itération %d\n",i);
+        printf("itération %d avec epsilon = %f\n",i, eps);
+        eps = -((eps_beginning)/iter)*i + eps_beginning;
         training();
         printf("fin de l'itération %d\n",i);
     }
