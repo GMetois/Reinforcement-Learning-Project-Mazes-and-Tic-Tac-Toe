@@ -14,7 +14,7 @@ void MakeQ(){
     for(int i=0; i<rows*cols; i++){
         Q[i] = malloc(4*sizeof(float));
         for(int j=0; j<4; j++){
-            Q[i][j] = 0;
+            Q[i][j] = 1;
         }
     }
 }
@@ -27,7 +27,7 @@ void freeQ(){
 }
 
 //Lit dans Q.
-float Qread(int row, int col, int a){
+float Qread(int row, int col, action a){
     return(Q[row*cols + col][a]);
 }
 
@@ -48,7 +48,6 @@ action eps_greedy(){
     
     //Choix aléatoire
     if (rand()%101>eps*100){
-        action act = env_action_sample();
         float rew = Qread(state_row, state_col, act);
         for (int k; k<4; k++){
             if (Qread(state_row, state_col, k) > rew){
@@ -62,7 +61,7 @@ action eps_greedy(){
 
 //Fonction qui trouve la récompense maximale possible depuis la case donnée en argument.
 
-int find_rew_max(int row, int col){
+float find_rew_max(int row, int col){
     /*
     float rew = Qread(row, col, 0);
     for (int k = 0; k<4; k++){
@@ -96,7 +95,7 @@ void training (){
     init_visited();
 
     //Re-génération d'une clé pour l'aléatoire.
-    srand(time(0));
+    srand(time(NULL));
     
     //Remise à zéro du labyrinthe
     maze_reset();
@@ -120,7 +119,10 @@ void training (){
         float reward = state.reward;
         int w = iswall();
         if (w == 1){
-            reward = -0.05;
+            reward = -50;
+        }
+        else {
+            reward = -1;
         }
         
         //Application de la formule.
@@ -150,6 +152,8 @@ void training (){
             sortie = 1;
         }
         step+=1;
+        //add_crumbs();
+        //maze_render();
     }
     printf("sortie trouvée en %d pas\n",step);
 }
@@ -167,14 +171,13 @@ int main()
         printf("itération %d\n",i);
         training();
         printf("fin de l'itération %d\n",i);
-        printf("Q : %f %f %f %f\n",Q[(goal_row)*cols+goal_col][0],Q[(goal_row)*cols+goal_col][1],Q[(goal_row)*cols+goal_col][2],Q[(goal_row)*cols+goal_col][3]);
     }
 
     //Dernier passage sans aléatoire.
     eps=0;
     training();
     
-    Qrender();
+    //Qrender();
     add_crumbs();
     maze_render();
     freeQ();

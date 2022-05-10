@@ -8,7 +8,7 @@ float** Q;
 float alp = 0.8;
 float eps = 0.1;
 float gam = 0.8;
-int iter = 50000;
+int iter = 100000;
 
 void MakeQ();
 
