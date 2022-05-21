@@ -140,13 +140,33 @@ void training (){
         char** new_board = alloc_board();
         board_copy(new_board,new_state.future_board);
         int legit = new_state.ok;
-        if(legit == 0){
+
+        //Choix d'une action a2 pour SARSA.
+        struct action a2 = eps_greedy(new_board);
+
+        
+        //Si le coup joué n'est pas valable on rechoisit des actions aléatoires jusqu'à en trouver une valable.
+        while(legit == 0){
+            
+            //Grosse punition pour ne pas avoir joué un coup valable.
             reward = -50;
+            
+            //On mémorise la punition.
+            int coorda1 = ((a1.x)*3)+a1.y;
+            int coorda2 = ((a2.x)*3)+a2.y;
+            Q[Qread(old_board)][coorda1] = Q[Qread(old_board)][coorda1] + alp*(reward + gam*Q[Qread(new_board)][coorda2] - Q[Qread(old_board)][coorda1]);
+            
+            //On choisit au hasard un autre coup.
+            action a1 = env_action_sample('x');
+            
+            //On vérifie si ce coup est valable, et on se prépare à procéder comme d'habitude.
+            envOutput new_state = board_play(a1, board);
+            reward = new_state.reward;
+            board_copy(new_board,new_state.future_board);
+            legit = new_state.ok;
+
         }
         
-        //Choix d'une action
-        struct action a2 = eps_greedy(board);
-
         //Conversion des actions choisies en coordonnées lisibles pour Q.
         int coorda1 = ((a1.x)*3)+a1.y;
         int coorda2 = ((a2.x)*3)+a2.y;

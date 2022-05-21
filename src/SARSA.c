@@ -1,6 +1,5 @@
 #include "mazeEnv.h"
 #include "QLearning.h"
-#include "functions.h"
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>

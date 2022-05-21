@@ -1,4 +1,4 @@
-#include "mazeEnv.h" 
+#include "mazeEnv.h"
 #include "functions.h"
 
 void alloc_maze(){
