@@ -1,5 +1,5 @@
 #include "mazeEnv.h"
-#include "QLearning.h"
+#include "SARSA.h"
 #include "functions.h"
 #include <stdlib.h>
 #include <time.h>
@@ -133,15 +133,7 @@ void training (){
         
         int* current = &visited[state_row][state_col];
         
-
-        /*
-        //Si on découvre une nouvelle case on affiche le labyrinthe avec les crumbs
-        if (*current != crumb){
-            printf("%d\n", sortie);
-            add_crumbs();
-            maze_render();
-        }
-        */
+        
 
         *current = crumb;
 
@@ -149,8 +141,6 @@ void training (){
             sortie = 1;
         }
         step+=1;
-        //add_crumbs();
-        //maze_render();
     }
     printf("sortie trouvée en %d pas\n",step);
 }
