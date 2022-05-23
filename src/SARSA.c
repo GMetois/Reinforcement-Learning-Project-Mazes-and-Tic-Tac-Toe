@@ -1,10 +1,6 @@
 #include "mazeEnv.h"
-<<<<<<< HEAD
 #include "SARSA.h"
 #include "functions.h"
-=======
-#include "QLearning.h"
->>>>>>> 17931eeef2ea4a1a1bf1eaabe0ae8f03c3d33d45
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
