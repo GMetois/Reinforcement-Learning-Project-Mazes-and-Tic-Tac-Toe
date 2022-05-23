@@ -76,7 +76,7 @@ int random_play(){
     struct action act = env_action_sample('o');
     envOutput output = board_play(act, board);
     
-    //Si le coup n'est pas valide, réessayer tant qu'il est valide.
+    //Si le coup n'est pas valide, réessayer tant qu'il est invalide.
     while(output.ok ==0){
     act = env_action_sample('o');
     output = board_play(act, board);
