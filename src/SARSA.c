@@ -155,7 +155,8 @@ int main()
     maze_render();
     
     for(int i = 0; i<iter; i++){
-        printf("itération %d\n",i);
+        printf("itération %d avec epsilon = %f\n",i, eps);
+        eps = -((eps_beginning)/iter)*i + eps_beginning;
         training();
         printf("fin de l'itération %d\n",i);
     }
