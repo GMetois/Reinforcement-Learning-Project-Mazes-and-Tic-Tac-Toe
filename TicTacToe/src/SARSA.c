@@ -187,7 +187,7 @@ void training (){
         //choix de l'action a2
         a1 = a2;
 
-        if (new_state.done==1){
+        if (is_winning('x',board)==1){
             fini = 1;
             printf("victoire du joueur\n");
             op+=1;

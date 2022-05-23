@@ -16,7 +16,6 @@ typedef struct action action;
 struct envOutput{
     char** future_board;
     float reward;
-    int done;
     int ok;
 };
 

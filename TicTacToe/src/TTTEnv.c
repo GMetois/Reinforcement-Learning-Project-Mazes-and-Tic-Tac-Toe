@@ -1,4 +1,4 @@
-#include "TTTEnv.h" 
+#include "TTTEnv.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -57,17 +57,15 @@ envOutput board_play(action a, char** b){
     int coord_y = a.y;
     char symb = a.joueur;
     float reward = 0;
-    int done = 0;
     int ok = 1;
     char** future_board = alloc_board();
     board_copy(future_board,b);
-    envOutput output = {future_board,reward,done,ok};
+    envOutput output = {future_board,reward,ok};
     if(future_board[coord_x][coord_y]!='.'){
         output.ok = 0;
     }
     future_board[coord_x][coord_y]=symb;
     output.reward = get_reward(future_board);
-    output.done = is_winning(symb,future_board);
     return(output);
 }
 
