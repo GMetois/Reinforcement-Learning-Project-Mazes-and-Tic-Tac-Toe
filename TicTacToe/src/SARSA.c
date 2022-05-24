@@ -174,14 +174,9 @@ void training (){
         //Application de la formule.
         Q[Qread(old_board)][coorda1] = Q[Qread(old_board)][coorda1] + alp*(reward + gam*Q[Qread(new_board)][coorda2] - Q[Qread(old_board)][coorda1]);
 
-        //Si le coup est légal, on actualise le plateau de jeu.
-        if (legit==1){
-            board_copy(board,new_board);
-            board_render(board);
-        }
-        else {
-            printf("Tour non valide! Pour la peine, tu ne joues pas!\n");
-        }
+        //On actualise le plateau de jeu.
+        board_copy(board,new_board);
+        board_render(board);
         printf("Fin du tour du joueur \n");
         
         //choix de l'action a2
