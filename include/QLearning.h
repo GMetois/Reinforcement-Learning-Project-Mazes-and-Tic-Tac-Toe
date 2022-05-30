@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <mazeEnv.h>
 
 float** Q;
 float alp = 0.8;
@@ -13,8 +14,18 @@ int iter = 100000;
 
 void MakeQ();
 
-void training();
+void freeQ();
 
-void add_crumbs();
+float Qread(int row, int col, action a);
+
+void Qrender();
+
+action eps_greedy();
+
+float find_new_reward(int row, int col);
+
+int iswall();
+
+void training();
 
 #endif
