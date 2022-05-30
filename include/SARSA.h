@@ -16,8 +16,6 @@ void MakeQ();
 
 void freeQ();
 
-float Qread(int row, int col, action a);
-
 void Qrender();
 
 action eps_greedy();

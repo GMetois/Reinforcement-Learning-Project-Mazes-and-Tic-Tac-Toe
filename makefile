@@ -2,11 +2,11 @@ CC=gcc
 CFLAGS=-W -Wall -lm
 INC=-I include/
 SRC=src/
-EXEC=SARSA
+EXEC=QLearning
 
 all: $(EXEC) clean
 
-SARSA: $(SRC)SARSA.o $(SRC)functions.o $(SRC)mazeEnv.o 
+QLearning: $(SRC)QLearning.o $(SRC)functions.o $(SRC)mazeEnv.o 
 	$(CC) $(INC) -g -o $(SRC)$@ $^ $(CFLAGS)
 
 $(SRC)%.o : $(SRC)%.c

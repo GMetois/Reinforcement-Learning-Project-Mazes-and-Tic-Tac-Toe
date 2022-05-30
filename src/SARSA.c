@@ -50,10 +50,10 @@ action eps_greedy(){
     
     //Choix aléatoire
     if (rand()%101>eps*100){
-        float rew = Qread(state_row, state_col, act);
-        for (int k; k<4; k++){
-            if (Qread(state_row, state_col, k) > rew){
-                rew = Qread(state_row, state_col, k);
+        float rew = Q[state_row*cols + state_col][act];
+        for (int k=0; k<4; k++){
+            if (Q[state_row*cols + state_col][k] > rew){
+                rew = Q[state_row*cols + state_col][k];
                 act = k;
             }
         }
@@ -131,12 +131,11 @@ void training (){
         //choix de l'action a2
         a1 = a2;
         
+        //On ajoute une miette si on a besoin de visualiser la trajectoire pas par pas pour débugguer.
         int* current = &visited[state_row][state_col];
-        
-        
-
         *current = crumb;
 
+        //On vérifie si on est sur la sortie.
         if ((state_row == goal_row)&&(state_col == goal_col)){
             sortie = 1;
         }

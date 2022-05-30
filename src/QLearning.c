@@ -47,10 +47,10 @@ action eps_greedy(){
     
     //Choix aléatoire
     if (rand()%101>eps*100){
-        float rew = Qread(state_row, state_col, act);
-        for (int k; k<4; k++){
-            if (Qread(state_row, state_col, k) > rew){
-                rew = Qread(state_row, state_col, k);
+        float rew = Q[state_row*cols + state_col][act];
+        for (int k=0; k<4; k++){
+            if (Q[state_row*cols + state_col][k] > rew){
+                rew = Q[state_row*cols + state_col][k];
                 act = k;
             }
         }
