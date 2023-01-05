@@ -1,6 +1,6 @@
-# CMaze
+# Reinforcement Learning Project : Mazes and Tic-Tac-Toe
 
-Here's our repository dedicated to the IN104 course at ENSTA Paris.
+Here's our repository dedicated to Reinforcement Learning. A small project will be conducted and used as a course project at ENSTA Paris.
 
 We aim here to implement QLearning algorithm in order to exit a maze first, then improve it with SARSA or DOUBLE Q algorithm for more efficiency.
 
